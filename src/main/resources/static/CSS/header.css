@@ -18,3 +18,10 @@
 .ghost-net-fishing-logo, .shea-sepherd-logo {
 	height: 50px;
 }
+
+.logo-wrapper .ghost-net-fishing-logo {
+	height: 50px;
+    border: 1px solid white;
+    padding: .5em;
+    border-radius: 5px;
+}

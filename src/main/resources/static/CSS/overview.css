@@ -1,0 +1,73 @@
+/* OVERVIEW CSS */
+.overview {
+	display: flex;
+	flex-direction: column;
+	gap: 3em;
+}
+
+.recovered-lost-nets-section {
+	margin-bottom: 3em;
+}
+
+/* Ghost Net Card */
+.ghost-net-card {
+	background-color: var(--medium-grey);
+	display: flex;
+	justify-content: space-around;
+	padding: 1em 0;
+	color: #FFF;
+}
+
+.ghost-net-card-list>.ghost-net-card:nth-of-type(even) {
+	background-color: var(--dark-grey);
+}
+
+.ghost-net-card>.item-group {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.overview .button-small {
+	padding: 0.8em 4em;
+	font-size: var(--font-base);
+}
+
+.overview .card-button {
+	padding: .8em 0;
+	font-size: var(--font-base);
+}
+
+.ghost-net-card-buttons.item-group {
+	gap: .25em;
+}
+
+.vertical-space {
+	gap: .5em;
+}
+
+.item-group.Id {
+	text-transform: uppercase;
+}
+
+.ghost-net-card-status {
+	min-width: 8em;
+}
+
+
+/* Report Form */
+.overview .report-form {
+	align-items: flex-start;
+}
+
+.overview .report-form {
+	gap: .5em;
+}
+
+
+/* Responsive */
+@media ( min-width : 1200px ) {
+	.overview .card-button, .ghost-net-card-status {
+		width: 11em;
+	}
+}
