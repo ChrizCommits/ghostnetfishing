@@ -1,10 +1,20 @@
 package de.chriz.ghostnetfishing.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import de.chriz.ghostnetfishing.model.GhostNet;
 import de.chriz.ghostnetfishing.model.GhostNetStatus;
@@ -15,43 +25,212 @@ import de.chriz.ghostnetfishing.repository.GhostNetRepository;
 @Controller
 public class GhostNetController {
 	private final GhostNetRepository ghostNetRepository;
+	private static final Logger logger = LoggerFactory.getLogger(GhostNetController.class);
 
-	// Konstruktur
+	// Konstruktor
 	public GhostNetController(GhostNetRepository ghostNetRepository) {
 		this.ghostNetRepository = ghostNetRepository;
 	}
 
-	// Holt alle GhostNets aus der Datenbank und übergibt sie dem Model
-	@GetMapping("/overview")
-	public String showGhostNets(Model model) {
-		model.addAttribute("overview", ghostNetRepository.findAll());
-		return "overview";
+	// Bereitet alle GhostNets aus der Datenbank für die View vor
+	@GetMapping("/report-success")
+	public String showSuccess(Model model, @RequestParam(defaultValue = "0") int reportSuccessPageIndex) {
+		// Regelt die Zahl der Items der Pagination
+		Pageable pageable = PageRequest.of(reportSuccessPageIndex, 10);
+		Page<GhostNet> reportSuccessPage = ghostNetRepository.findAllByOrderByLastUpdatedDesc(pageable);
+
+		model.addAttribute("reportSuccessPage", reportSuccessPage);
+		model.addAttribute("reportSuccessNets", reportSuccessPage.getContent());
+
+		// Pfade
+		final String basePath = "/report-success";
+		model.addAttribute("reportSuccessPath", basePath + "?reportSuccessPageIndex=");
+
+		return "report-success";
 	}
 
-	// Liest die Daten des Formulars ein
+	// Bereitet alle Daten fürs Formulars vor
 	@GetMapping("/report")
-	public String showForm(Model model, GhostNet ghostNet) {
-		ghostNet = new GhostNet();
+	public String showForm(Model model) {
+		GhostNet ghostNet = new GhostNet();
 		ghostNet.setUser(new User());
 		model.addAttribute("ghostNet", ghostNet);
+		model.addAttribute("formAction", "/report");
 		return "report";
 	}
 
 	// Sendet die Daten des gemeldeten Netzes an die View
 	@PostMapping("/report")
-	public String submitForm(@ModelAttribute GhostNet ghostNet) {
+	public String submitReport(@ModelAttribute GhostNet ghostNet, Model model) {
+		if (ghostNet.getUser() == null) {
+			ghostNet.setUser(new User());
+		}
+
 		ghostNet.getUser().setRole(UserRole.MELDENDE_PERSON);
 		ghostNet.setStatus(GhostNetStatus.GEMELDET);
+
+		User user = ghostNet.getUser();
+		if (user.getIsAnonym()) {
+			user.setName(null);
+			user.setTelephone(null);
+		} else {
+			if (user.getName() != null && user.getName().isBlank())
+				user.setName(null);
+			if (user.getTelephone() != null && user.getTelephone().isBlank())
+				user.setTelephone(null);
+		}
+
+		// Error-Handling
+		Double latitude = ghostNet.getLatitude();
+		Double longitude = ghostNet.getLongitude();
+		List<GhostNetStatus> active = List.of(GhostNetStatus.GEMELDET, GhostNetStatus.BERGUNG_BEVORSTEHEND);
+		boolean activeNetExists = ghostNetRepository.existsByLatitudeAndLongitudeAndStatusIn(latitude, longitude,
+				active);
+
+		if (latitude != null && longitude != null && activeNetExists) {
+			return redirectAfterError("", model);
+		}
+
 		ghostNetRepository.save(ghostNet);
-		return "redirect:/ghostnets";
+		model.addAttribute("formAction", "/report");
+		return "redirect:/report-success";
+	}
+
+	@GetMapping("/overview")
+	public String showOverview(Model model, @RequestParam(defaultValue = "0") int reportedPageIndex,
+			@RequestParam(defaultValue = "0") int recoveryPageIndex,
+			@RequestParam(defaultValue = "0") int recoveredLostPageIndex) {
+
+		// Regelt die Zahl der Items der Pagination
+		final int pageSize = 2;
+		Pageable pageableReported = PageRequest.of(reportedPageIndex, pageSize);
+		Pageable pageableRecovery = PageRequest.of(recoveryPageIndex, pageSize);
+		Pageable pageableRecoveredLost = PageRequest.of(recoveredLostPageIndex, pageSize);
+
+		List<GhostNetStatus> ghostNetStatusList = List.of(GhostNetStatus.GEBORGEN, GhostNetStatus.VERSCHOLLEN);
+
+		Page<GhostNet> reportedPage = ghostNetRepository.findByStatus(GhostNetStatus.GEMELDET, pageableReported);
+		Page<GhostNet> recoveryPage = ghostNetRepository.findByStatus(GhostNetStatus.BERGUNG_BEVORSTEHEND,
+				pageableRecovery);
+		Page<GhostNet> recoveredLostPage = ghostNetRepository.findByStatusIn(ghostNetStatusList, pageableRecoveredLost);
+
+		// Pagination-Objekte
+		model.addAttribute("reportedPage", reportedPage);
+		model.addAttribute("recoveryPage", recoveryPage);
+		model.addAttribute("recoveredLostPage", recoveredLostPage);
+
+		// Inhalt der Netz-Tabellen
+		model.addAttribute("reportedNets", reportedPage.getContent());
+		model.addAttribute("recoveryNets", recoveryPage.getContent());
+		model.addAttribute("recoveredLostNets", recoveredLostPage.getContent());
+
+		// Pfade
+		final String basePath = "/overview";
+		model.addAttribute("reportedPath", basePath + "?recoveryPageIndex=" + recoveryPageIndex
+				+ "&recoveredLostPageIndex=" + recoveredLostPageIndex + "&reportedPageIndex=");
+		model.addAttribute("recoveryPath", basePath + "?reportedPageIndex=" + reportedPageIndex
+				+ "&recoveredLostPageIndex=" + recoveredLostPageIndex + "&recoveryPageIndex=");
+		model.addAttribute("recoveredLostPath", basePath + "?reportedPageIndex=" + reportedPageIndex
+				+ "&recoveryPageIndex=" + recoveryPageIndex + "&recoveredLostPageIndex=");
+
+		return "overview";
 	}
 
 	@GetMapping("/recover")
-	public String showRecover(Model model, GhostNet ghostNet) {
-//		ghostNet = new GhostNet();
-//		ghostNet.setUser(new User());
-//		model.addAttribute("ghostNet", ghostNet);
+	public String showRecover(@RequestParam Long id, Model model) {
+		GhostNet ghostNet = ghostNetRepository.findById(id).orElseThrow();
+		// Erstelle einen neuen Nutzer, falls nicht vorhanden
+
+		ghostNet.setUser(new User());
+
+		// ReadOnly-Felder im Formular
+		List<String> readOnlyFields = new ArrayList<>();
+		readOnlyFields.add("id");
+		readOnlyFields.add("latitude");
+		readOnlyFields.add("longitude");
+		readOnlyFields.add("size");
+
+		model.addAttribute("ghostNet", ghostNet);
+		model.addAttribute("readOnlyFields", readOnlyFields);
+		model.addAttribute("formAction", "/recover");
 		return "recover";
+	}
+
+	@PostMapping("/recover")
+	public String submitRecover(@ModelAttribute GhostNet ghostNet, @RequestParam Long id) {
+		GhostNet updatedNet = ghostNetRepository.findById(id).orElseThrow();
+
+		// Safety
+		if (ghostNet.getUser() != null && updatedNet.getUser() != null) {
+			updatedNet.getUser().setName(ghostNet.getUser().getName());
+			updatedNet.getUser().setTelephone(ghostNet.getUser().getTelephone());
+		}
+		if (updatedNet.getUser() == null) {
+			updatedNet.setUser(new User());
+		}
+
+		updatedNet.getUser().setRole(UserRole.BERGENDE_PERSON);
+		updatedNet.setStatus(GhostNetStatus.BERGUNG_BEVORSTEHEND);
+		ghostNetRepository.save(updatedNet);
+		return "redirect:/report-success";
+	}
+
+	@GetMapping("/report-recovered")
+	public String showRecovered(@RequestParam Long id, Model model) {
+		GhostNet ghostNet = ghostNetRepository.findById(id).orElseThrow();
+
+		// Safety
+		if (ghostNet.getUser() == null) {
+			ghostNet.setUser(new User());
+		}
+		// ReadOnly-Felder im Formular
+		List<String> readOnlyFields = new ArrayList<>();
+		readOnlyFields.add("id");
+		readOnlyFields.add("latitude");
+		readOnlyFields.add("longitude");
+		readOnlyFields.add("size");
+
+		model.addAttribute("ghostNet", ghostNet);
+		model.addAttribute("formAction", "/report-recovered");
+		model.addAttribute("readOnlyFields", readOnlyFields);
+		return "report-recovered";
+	}
+
+	@PostMapping("/report-recovered")
+	public String submitRecovered(@ModelAttribute GhostNet ghostNet) {
+		// Safety
+		User user = ghostNet.getUser();
+		// wenn kein Nutzer vorhanden ist, erstelle einen neuen Nutzer
+		if (user == null) {
+			user = new User();
+			ghostNet.setUser(new User());
+		}
+
+		ghostNet.setStatus(GhostNetStatus.GEBORGEN);
+
+		// // Leite zur Errorseite
+		// // oder nicht dem zur Bergung eingetragenen Nutzer entspricht
+		// if (!user.equals(ghostNetRepository.findById(ghostNet.getId()).orElse(null)))
+		// {
+		// return redirectAfterError();
+		// }
+		// // wenn die Telefonnummer nicht dem zur Bergung eingetragenen Nutzers
+		// entspricht
+		// if
+		// (!user.getTelephone().equals(ghostNetRepository.findById(ghostNet.getId()).orElse(null)))
+		// {
+		// return redirectAfterError();
+		// }
+		// // wenn das Netz vorher nicht zur Bergung eingetragen wurde
+		ghostNetRepository.save(ghostNet);
+		return "redirect:/report-success";
+	}
+
+	// Für die Umleitung auf die spätere Error-Seite
+	private String redirectAfterError(String error, Model model) {
+		String errorMessage = "Leider ist ein Fehler aufgetreten." + error;
+		model.addAttribute("errorMessage", errorMessage);
+		return "redirect:/error";
 	}
 
 }

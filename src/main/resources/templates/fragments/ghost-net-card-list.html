@@ -1,13 +1,14 @@
-<div class="ghost-net-card-list reported-net-list"
-	xmlns:th="http://www.thymeleaf.org">
-	<th:block
-		th:replace="~{fragments/ghost-net-card-pagination :: ghostNetCardPagination}"></th:block>
+<div th:fragment="ghostNetCardList(netList, page, basePath)"
+	class="ghost-net-card-list reported-net-list item-group vertical-space" xmlns:th="http://www.thymeleaf.org">
 
-	<div class="item-group">
-		<div class="item-column">
-			<p>→ Übersicht aller Netze</p>
-		</div>
+	<p th:if="${netList == null or #lists.isEmpty(netList)}">Kein Eintrag vorhanden.</p>
+	<th:block th:each="net : ${netList}">
+		<th:block th:replace="~{fragments/ghost-net-card :: ghostNetCard(net=${net})}"></th:block>
+	</th:block>
+
+	<div class="item-group link-pagination-row">
+		<div class="item-group left-element"></div>
+		<th:block th:replace="~{fragments/pagination :: pagination(page=${page}, basePath=${basePath})}"></th:block>
+		<div class="right-element"></div>
 	</div>
-	<th:block
-		th:replace="~{fragments/ghost-net-card-pagination :: ghostNetCardPagination}"></th:block>
 </div>
