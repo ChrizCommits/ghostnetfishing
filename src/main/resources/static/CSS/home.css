@@ -6,6 +6,7 @@
 }
 
 .vertical-text-container {
+	font-family: var(--heading-font);
 	position: absolute;
 	left: 0;
 	top: -65%;
