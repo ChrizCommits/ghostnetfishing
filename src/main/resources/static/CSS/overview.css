@@ -71,3 +71,24 @@
 		width: 11em;
 	}
 }
+
+
+/* Ghost Net Map */
+
+.ghost-net-map {
+  position: relative;
+  max-width: 100%;
+  background: #ccc;
+}
+.ghost-net-map img {
+  display: block;
+  width: 50%;
+  height: auto;
+}
+.map-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 50%;
+  height: 50%;
+  pointer-events: none;
+}

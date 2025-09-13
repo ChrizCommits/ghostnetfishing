@@ -13,17 +13,16 @@
 			<section class="section reported-nets-section container">
 				<h2>Gemeldete Netze</h2>
 				<div class="gapped">
-
 					<th:block
 						th:replace="~{fragments/ghost-net-card-list :: ghostNetCardList(netList=${reportedNets}, page=${reportedPage}, basePath=${reportedPath})}">
 					</th:block>
+					<th:block th:replace="~{fragments/ghost-net-map :: ghostNetMap(nets = ${reportedNetsList})}"></th:block>
 				</div>
 			</section>
 
 			<section class="section recovery-nets-section container">
 				<h2>Bergung bevorstehend</h2>
 				<div class="gapped">
-
 					<th:block
 						th:replace="~{fragments/ghost-net-card-list :: ghostNetCardList(netList=${recoveryNets}, page=${recoveryPage}, basePath=${recoveryPath})}">
 					</th:block>
@@ -33,7 +32,6 @@
 			<section class="section recovered-lost-nets-section container">
 				<h2>Geborgene und verschollene Netze</h2>
 				<div class="gapped">
-
 					<th:block
 						th:replace="~{fragments/ghost-net-card-list :: ghostNetCardList(netList=${recoveredLostNets}, page=${recoveredLostPage}, basePath=${recoveredLostPath})}">
 					</th:block>

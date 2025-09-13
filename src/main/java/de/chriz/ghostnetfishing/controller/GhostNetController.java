@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.chriz.ghostnetfishing.model.GhostNet;
 import de.chriz.ghostnetfishing.model.GhostNetStatus;
@@ -132,6 +131,12 @@ public class GhostNetController {
 				+ "&recoveredLostPageIndex=" + recoveredLostPageIndex + "&recoveryPageIndex=");
 		model.addAttribute("recoveredLostPath", basePath + "?reportedPageIndex=" + reportedPageIndex
 				+ "&recoveryPageIndex=" + recoveryPageIndex + "&recoveredLostPageIndex=");
+
+		// Anzeige der Netze für die Map
+		List<GhostNet> reportedNetsList = ghostNetRepository.findByStatus(GhostNetStatus.GEMELDET);
+		model.addAttribute("reportedNetsList", reportedNetsList);
+		
+		System.out.println("Liste hat: " + reportedNetsList.size() + " Einträge");
 
 		return "overview";
 	}

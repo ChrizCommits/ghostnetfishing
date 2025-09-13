@@ -1,0 +1,15 @@
+<div th:fragment="ghostNetMap(nets)" class="ghost-net-map" xmlns:th="http://thymeleaf.org">
+
+	<img th:src="@{/img/world.svg}" alt="Weltkarte - Plate Carrée">
+
+
+	<svg class="map-overlay" viewBox="0 0 2752.766 1537.631" xmlns="http://www.w3.org/2000/svg">
+		<g class="markers">
+			<th:block th:each="net : ${nets}">
+				<circle th:cx="${(net.longitude + 180) / 360 * 2752.766}" th:cy="${(90 - net.latitude) / 180 * 1537.631}" r="10"
+				fill="black" />
+			</th:block>
+		</g>
+	</svg>
+
+</div>
