@@ -21,7 +21,7 @@
 	background-color: var(--medium-grey);
 }
 
-.report-success .table-data:nth-of-type(even) p {
+.report-success .table-data:nth-of-type(odd) p {
 	background-color: var(--dark-grey);
 }
 
@@ -31,4 +31,8 @@
 
 .report-success .success-table {
 	margin-bottom: 3rem;
+}
+
+.success-table .item-row { 
+  margin-top: .5rem;
 }

@@ -33,7 +33,8 @@ public class GhostNet {
 
 	}
 
-	public GhostNet(Double latitude, Double longitude, float size, GhostNetStatus status, LocalDateTime lastUpdated, User user) {
+	public GhostNet(Long id, Double latitude, Double longitude, float size, GhostNetStatus status, LocalDateTime lastUpdated, User user) {
+		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.size = size;

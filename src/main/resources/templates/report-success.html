@@ -13,8 +13,7 @@
 			<section class="section container gapped">
 
 				<div class="item-group confirmation-message-container">
-					<p class="confirmation-message">Ihre Daten wurden übermittelt.
-						Vielen Dank für Ihre Unterstützung!</p>
+					<p class="confirmation-message">Ihre Daten wurden übermittelt. Vielen Dank für Ihre Unterstützung!</p>
 				</div>
 
 				<div class="table success-table">
@@ -26,14 +25,16 @@
 						<p>Status</p>
 						<p>zuletzt geändert</p>
 					</div>
-					<th:div class="table-data table-row" th:each="net : ${reportSuccessNets}">
+					
+					<div class="table-data table-row" th:each="net : ${reportSuccessNets}"
+						th:classappend="${net.id.equals(reportedNetId)} ? ' highlighted' : ''">
 						<p th:text="'#' + ${net.id}"></p>
 						<p th:text="${net.latitude}"></p>
 						<p th:text="${net.longitude}"></p>
 						<p th:text="${net.size}"></p>
 						<p th:text="${net.status}"></p>
 						<p th:text="${net.lastUpdated}"></p>
-					</th:div>
+					</div>
 
 					<div class=item-row>
 						<th:block

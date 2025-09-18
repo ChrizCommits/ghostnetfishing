@@ -11,7 +11,7 @@
 
 		<div class="section-wrapper report">
 			<section class="report-section section container">
-				<th:block th:replace="~{fragments/contact-form :: contactForm(formAction='/report')}"></th:block>
+				<th:block th:replace="~{fragments/contact-form :: contactForm(formAction=${formAction})}"></th:block>
 			</section>
 		</div>
 	</main>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,23 +32,6 @@ public class GhostNetController {
 		this.ghostNetRepository = ghostNetRepository;
 	}
 
-	// Bereitet alle GhostNets aus der Datenbank für die View vor
-	@GetMapping("/report-success")
-	public String showSuccess(Model model, @RequestParam(defaultValue = "0") int reportSuccessPageIndex) {
-		// Regelt die Zahl der Items der Pagination
-		Pageable pageable = PageRequest.of(reportSuccessPageIndex, 10);
-		Page<GhostNet> reportSuccessPage = ghostNetRepository.findAllByOrderByLastUpdatedDesc(pageable);
-
-		model.addAttribute("reportSuccessPage", reportSuccessPage);
-		model.addAttribute("reportSuccessNets", reportSuccessPage.getContent());
-
-		// Pfade
-		final String basePath = "/report-success";
-		model.addAttribute("reportSuccessPath", basePath + "?reportSuccessPageIndex=");
-
-		return "report-success";
-	}
-
 	// Bereitet alle Daten fürs Formulars vor
 	@GetMapping("/report")
 	public String showForm(Model model) {
@@ -60,7 +44,7 @@ public class GhostNetController {
 
 	// Sendet die Daten des gemeldeten Netzes an die View
 	@PostMapping("/report")
-	public String submitReport(@ModelAttribute GhostNet ghostNet, Model model) {
+	public String submitReport(@ModelAttribute GhostNet ghostNet, Model model, RedirectAttributes ra) {
 		if (ghostNet.getUser() == null) {
 			ghostNet.setUser(new User());
 		}
@@ -89,12 +73,32 @@ public class GhostNetController {
 		// Schließe Duplikate aus -> Error Page
 		boolean isDuplicate = latitude != null && longitude != null && activeNetExists;
 		if (isDuplicate) {
-			return redirectAfterError("", model);
+			return redirectAfterError();
 		}
 
-		ghostNetRepository.save(ghostNet);
-		model.addAttribute("formAction", "/report");
+		GhostNet saved = ghostNetRepository.save(ghostNet);
+
+		// Gib die ID für das gemeldete Netz weiter
+		ra.addFlashAttribute("reportedNetId", saved.getId());
+
 		return "redirect:/report-success";
+	}
+
+	// Bereitet alle GhostNets aus der Datenbank für die View vor
+	@GetMapping("/report-success")
+	public String showSuccess(Model model, @RequestParam(defaultValue = "0") int reportSuccessPageIndex) {
+		// Regelt die Zahl der Items der Pagination
+		Pageable pageable = PageRequest.of(reportSuccessPageIndex, 10);
+		Page<GhostNet> reportSuccessPage = ghostNetRepository.findAllByOrderByLastUpdatedDesc(pageable);
+
+		model.addAttribute("reportSuccessPage", reportSuccessPage);
+		model.addAttribute("reportSuccessNets", reportSuccessPage.getContent());
+
+		// Pfade
+		final String basePath = "/report-success";
+		model.addAttribute("reportSuccessPath", basePath + "?reportSuccessPageIndex=");
+
+		return "report-success";
 	}
 
 	@GetMapping("/overview")
@@ -232,10 +236,15 @@ public class GhostNetController {
 	}
 
 	// Für die Umleitung auf die spätere Error-Seite
-	private String redirectAfterError(String error, Model model) {
-		String errorMessage = "Leider ist ein Fehler aufgetreten." + error;
-		model.addAttribute("errorMessage", errorMessage);
+	private String redirectAfterError() {
+
 		return "redirect:/error";
+	}
+
+	public String showError(RedirectAttributes ra, String error) {
+		String errorMessage = "Leider ist ein Fehler aufgetreten." + error;
+		ra.addFlashAttribute("errorMessage", errorMessage);
+		return "error";
 	}
 
 }
