@@ -33,6 +33,11 @@
 	margin-bottom: 3rem;
 }
 
-.success-table .item-row { 
-  margin-top: .5rem;
+.success-table .item-row {
+	margin-top: .5rem;
+}
+
+.report-success .highlighted p {
+	color: #FFF !important;
+	background: var(--highlight-bright) !important;
 }

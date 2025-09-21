@@ -35,8 +35,8 @@
 }
 
 .overview .card-button {
-	padding: .8em 0;
-	font-size: var(--font-base);
+	padding: .7em 0;
+	font-size: var(--font-medium);
 }
 
 .ghost-net-card-buttons.item-group {
@@ -65,17 +65,6 @@
 	gap: .5em;
 }
 
-
-/* Responsive */
-@media (min-width : 1200px) {
-
-	.overview .card-button,
-	.ghost-net-card-status {
-		width: 11em;
-	}
-}
-
-
 /* Ghost Net Map */
 .ghost-net-map {
 	display: flex;
@@ -98,5 +87,14 @@
 
 .ghost-net-map circle {
 	r: 25;
-	fill: orange;
+	fill: var(--highlight-bright);
+}
+
+/* Responsive */
+@media (min-width : 1200px) {
+
+	.overview .card-button,
+	.ghost-net-card-status {
+		width: 10em;
+	}
 }

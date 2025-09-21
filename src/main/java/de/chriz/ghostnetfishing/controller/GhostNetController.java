@@ -182,7 +182,7 @@ public class GhostNetController {
 	}
 
 	@PostMapping("/recover")
-	public String submitRecover(@ModelAttribute GhostNet ghostNet, @RequestParam Long id) {
+	public String submitRecover(@ModelAttribute GhostNet ghostNet, @RequestParam Long id, RedirectAttributes ra) {
 		GhostNet updatedNet = ghostNetRepository.findById(id).orElseThrow();
 
 		// Safety
@@ -196,7 +196,12 @@ public class GhostNetController {
 
 		updatedNet.getUser().setRole(UserRole.BERGENDE_PERSON);
 		updatedNet.setStatus(GhostNetStatus.BERGUNG_BEVORSTEHEND);
-		ghostNetRepository.save(updatedNet);
+
+		GhostNet saved = ghostNetRepository.save(updatedNet);
+
+		// Gib die ID für das gemeldete Netz weiter
+		ra.addFlashAttribute("recoveredNetId", saved.getId());
+
 		return "redirect:/report-success";
 	}
 
