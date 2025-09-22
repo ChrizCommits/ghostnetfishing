@@ -27,7 +27,7 @@
 					</div>
 
 					<div class="table-data table-row" th:each="net : ${reportSuccessNets}"
-						th:classappend="${net.id.equals(reportedNetId) || net.id.equals(recoveredNetId)} ? ' highlighted' : ''">
+						th:classappend="${net.id.equals(reportedNetId) || net.id.equals(recoveryNetId) || net.id.equals(recoveredNetId)}? ' highlighted' : ''">
 						<p th:text="'#' + ${net.id}"></p>
 						<p th:text="${net.latitude}"></p>
 						<p th:text="${net.longitude}"></p>

@@ -200,7 +200,7 @@ public class GhostNetController {
 		GhostNet saved = ghostNetRepository.save(updatedNet);
 
 		// Gib die ID für das gemeldete Netz weiter
-		ra.addFlashAttribute("recoveredNetId", saved.getId());
+		ra.addFlashAttribute("recoveryNetId", saved.getId());
 
 		return "redirect:/report-success";
 	}
@@ -227,7 +227,7 @@ public class GhostNetController {
 	}
 
 	@PostMapping("/report-recovered")
-	public String submitRecovered(@ModelAttribute GhostNet ghostNet) {
+	public String submitRecovered(@ModelAttribute GhostNet ghostNet, RedirectAttributes ra) {
 		// Safety
 		User user = ghostNet.getUser();
 		// wenn kein Nutzer vorhanden ist, erstelle einen neuen Nutzer
@@ -238,17 +238,11 @@ public class GhostNetController {
 
 		ghostNet.setStatus(GhostNetStatus.GEBORGEN);
 
-		// Leite zur Errorseite
-		// wenn die Bergung eingetragenen Nutzer entspricht
-		if (!user.equals(ghostNetRepository.findById(ghostNet.getId()).orElse(null))) {
-			return "error";
-		}
-		// wenn die Telefonnummer nicht dem zur Bergung eingetragenen Nutzers entspricht
-		if (!user.getTelephone().equals(ghostNetRepository.findById(ghostNet.getId()).orElse(null))) {
-			return "error";
-		}
-		// wenn das Netz vorher nicht zur Bergung eingetragen wurde
-		ghostNetRepository.save(ghostNet);
+		GhostNet saved = ghostNetRepository.save(ghostNet);
+
+		// Gib die ID für das gemeldete Netz weiter
+		ra.addFlashAttribute("recoveredNetId", saved.getId());
+
 		return "redirect:/report-success";
 	}
 
@@ -258,5 +252,4 @@ public class GhostNetController {
 		boolean isValidNetValue = stringValue.matches(pattern);
 		return isValidNetValue;
 	}
-
 }
