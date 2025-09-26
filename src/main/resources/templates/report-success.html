@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
-<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<html
+	lang="de"
+	xmlns:th="http://www.thymeleaf.org">
 
 <th:block th:replace="~{fragments/head :: head('Daten erfolgreich übermittelt')}"></th:block>
 
@@ -26,7 +28,9 @@
 						<p>zuletzt geändert</p>
 					</div>
 
-					<div class="table-data table-row" th:each="net : ${reportSuccessNets}"
+					<div
+						class="table-data table-row"
+						th:each="net : ${reportSuccessNets}"
 						th:classappend="${net.id.equals(reportedNetId) || net.id.equals(recoveryNetId) || net.id.equals(recoveredNetId)}? ' highlighted' : ''">
 						<p th:text="'#' + ${net.id}"></p>
 						<p th:text="${net.latitude}"></p>

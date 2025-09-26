@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
-<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<html
+	lang="de"
+	xmlns:th="http://www.thymeleaf.org">
 
 <th:block th:replace="~{fragments/head :: head('Ghost Net Fishing - Startseite')}"></th:block>
 
@@ -10,8 +12,11 @@
 		<div class="section-wrapper home relative">
 			<div class="container">
 				<div class="selection">
-					<a class="button report-button" th:href="@{report}">melden</a>
-					<a class="button recover-button" th:href="@{overview}">bergen</a>
+					<a
+						class="button report-button"
+						th:href="@{report}">melden</a> <a
+						class="button recover-button"
+						th:href="@{overview}">bergen</a>
 				</div>
 			</div>
 			<section class="section">

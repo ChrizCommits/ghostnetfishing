@@ -1,10 +1,11 @@
-.net-info, .contact-data {
+.report .net-info,
+.report .contact-data {
 	display: flex;
 	flex-direction: column;
 	gap: .5em;
 }
 
-.info-wrapper legend {
+.report .info-wrapper legend {
 	margin-bottom: .25em;
 }
 
@@ -14,20 +15,13 @@
 	gap: 2em;
 }
 
-.user-choice {
+.report .user-choice {
 	display: flex;
 	flex-direction: column;
 	gap: 1em;
 }
 
-.info-wrapper {
-	justify-content: center;
-	gap: 5em;
-}
-
-
 
 .report-form .name {
 	row-gap: .15em;
 }
-

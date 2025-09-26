@@ -38,6 +38,7 @@ public class GhostNetController {
 		ghostNet.setUser(new User());
 		model.addAttribute("ghostNet", ghostNet);
 		model.addAttribute("formAction", "/report");
+		model.addAttribute("pageTitle", "Geisternetz melden");
 		return "report";
 	}
 
@@ -55,9 +56,9 @@ public class GhostNetController {
 		// Lies den Nutzer aus
 		User user = ghostNet.getUser();
 
-		boolean isAnonym = user.getIsAnonym();
+		Boolean anonym = user.getAnonym();
 
-		if (isAnonym) {
+		if (anonym) {
 			user.setName(null);
 			user.setTelephone(null);
 		} else {
@@ -82,7 +83,7 @@ public class GhostNetController {
 		boolean isNetEmpty = latitude == null || longitude == null || size == null;
 		boolean isUserEmpty = name == null || telephone == null;
 
-		if (isNetEmpty || (isUserEmpty && !isAnonym)) {
+		if (isNetEmpty || (isUserEmpty && !anonym)) {
 			throw new EmptyFieldException();
 		}
 
@@ -97,6 +98,7 @@ public class GhostNetController {
 		// Gib die ID für das gemeldete Netz weiter
 		ra.addFlashAttribute("reportedNetId", saved.getId());
 
+		ra.addFlashAttribute("formAction", "/report");
 		return "redirect:/report-success";
 	}
 
@@ -114,6 +116,7 @@ public class GhostNetController {
 		final String basePath = "/report-success";
 		model.addAttribute("reportSuccessPath", basePath + "?reportSuccessPageIndex=");
 
+		model.addAttribute("pageTitle", "Geisternetz erfolgreich gemeldet");
 		return "report-success";
 	}
 
@@ -157,27 +160,18 @@ public class GhostNetController {
 		// Anzeige der Netze für die Map
 		List<GhostNet> reportedNetsList = ghostNetRepository.findByStatus(GhostNetStatus.GEMELDET);
 		model.addAttribute("reportedNetsList", reportedNetsList);
-
 		return "overview";
 	}
 
 	@GetMapping("/recover")
 	public String showRecover(@RequestParam Long id, Model model) {
 		GhostNet ghostNet = ghostNetRepository.findById(id).orElseThrow();
-		// Erstelle einen neuen Nutzer, falls nicht vorhanden
-
+		// Erstelle einen neuen Nutzer, für leere Eingabefelder
 		ghostNet.setUser(new User());
 
-		// ReadOnly-Felder im Formular
-		List<String> readOnlyFields = new ArrayList<>();
-		readOnlyFields.add("id");
-		readOnlyFields.add("latitude");
-		readOnlyFields.add("longitude");
-		readOnlyFields.add("size");
-
 		model.addAttribute("ghostNet", ghostNet);
-		model.addAttribute("readOnlyFields", readOnlyFields);
 		model.addAttribute("formAction", "/recover");
+		model.addAttribute("pageTitle", "Geisternetz bergen");
 		return "recover";
 	}
 
@@ -185,22 +179,21 @@ public class GhostNetController {
 	public String submitRecover(@ModelAttribute GhostNet ghostNet, @RequestParam Long id, RedirectAttributes ra) {
 		GhostNet updatedNet = ghostNetRepository.findById(id).orElseThrow();
 
-		// Safety
-		if (ghostNet.getUser() != null && updatedNet.getUser() != null) {
-			updatedNet.getUser().setName(ghostNet.getUser().getName());
-			updatedNet.getUser().setTelephone(ghostNet.getUser().getTelephone());
-		}
+		// Errohandling - Falls kein User vorhanden ist
 		if (updatedNet.getUser() == null) {
-			updatedNet.setUser(new User());
+			throw new IllegalStateException();
 		}
+
+		updatedNet.setUser(ghostNet.getUser());
 
 		updatedNet.getUser().setRole(UserRole.BERGENDE_PERSON);
 		updatedNet.setStatus(GhostNetStatus.BERGUNG_BEVORSTEHEND);
 
 		GhostNet saved = ghostNetRepository.save(updatedNet);
+		Long recoveryNetId = saved.getId();
 
 		// Gib die ID für das gemeldete Netz weiter
-		ra.addFlashAttribute("recoveryNetId", saved.getId());
+		ra.addFlashAttribute("recoveryNetId", recoveryNetId);
 
 		return "redirect:/report-success";
 	}
@@ -209,40 +202,36 @@ public class GhostNetController {
 	public String showRecovered(@RequestParam Long id, Model model) {
 		GhostNet ghostNet = ghostNetRepository.findById(id).orElseThrow();
 
-		// Safety
+		// Stabilität - Falls kein User vorhanden ist, wird ein neuer erstellt
 		if (ghostNet.getUser() == null) {
 			ghostNet.setUser(new User());
 		}
-		// ReadOnly-Felder im Formular
-		List<String> readOnlyFields = new ArrayList<>();
-		readOnlyFields.add("id");
-		readOnlyFields.add("latitude");
-		readOnlyFields.add("longitude");
-		readOnlyFields.add("size");
 
 		model.addAttribute("ghostNet", ghostNet);
+		// Gib die Seitenkennung weiter
 		model.addAttribute("formAction", "/report-recovered");
-		model.addAttribute("readOnlyFields", readOnlyFields);
+		model.addAttribute("pageTitle", "Geisternetz geborgen melden");
 		return "report-recovered";
 	}
 
 	@PostMapping("/report-recovered")
-	public String submitRecovered(@ModelAttribute GhostNet ghostNet, RedirectAttributes ra) {
-		// Safety
+	public String submitRecovered(@RequestParam Long id, @ModelAttribute GhostNet ghostNet, RedirectAttributes ra) {
+		ghostNet = ghostNetRepository.findById(id).orElseThrow();
+		// Sicherheitsprüfung des Nutzers
 		User user = ghostNet.getUser();
 		// wenn kein Nutzer vorhanden ist, erstelle einen neuen Nutzer
 		if (user == null) {
-			user = new User();
-			ghostNet.setUser(new User());
+			throw new IllegalStateException();
 		}
 
+		// Setze neuen Status fürs Netz
 		ghostNet.setStatus(GhostNetStatus.GEBORGEN);
-
+		// Speichere das Netz ins Repository ab
 		GhostNet saved = ghostNetRepository.save(ghostNet);
-
 		// Gib die ID für das gemeldete Netz weiter
 		ra.addFlashAttribute("recoveredNetId", saved.getId());
-
+		// Gib die Seitenkennung weiter
+		ra.addFlashAttribute("formAction", "/report-recovered");
 		return "redirect:/report-success";
 	}
 

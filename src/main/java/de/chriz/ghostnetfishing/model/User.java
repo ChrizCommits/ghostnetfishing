@@ -11,7 +11,8 @@ public class User {
 	@Column(nullable = true)
 	private String name; // Selbstgewählter Name des Nutzers
 	@Column(nullable = true)
-	private boolean isAnonym; // Wert für Checkbox, für anonyme Reports
+	private Boolean anonym; // Wert für Checkbox, für anonyme Reports
+	@Column(nullable = true)
 	private String telephone; // Telefonnummer des Nutzers
 	@Enumerated(EnumType.STRING)
 	private UserRole role; // Rolle des Nutzers
@@ -20,9 +21,9 @@ public class User {
 	public User() {
 	}
 
-	public User(String name, boolean isAnonym, String telephone, UserRole role) {
+	public User(String name, Boolean anonym, String telephone, UserRole role) {
 		this.name = name;
-		this.isAnonym = isAnonym;
+		this.anonym = anonym;
 		this.telephone = telephone;
 		this.role = role;
 	}
@@ -36,12 +37,12 @@ public class User {
 		this.name = name;
 	}
 
-	public boolean getIsAnonym() {
-		return isAnonym;
+	public Boolean getAnonym() {
+		return anonym;
 	}
 
-	public void setIsAnonym(boolean isAnonym) {
-		this.isAnonym = isAnonym;
+	public void setAnonym(Boolean anonym) {
+		this.anonym = anonym;
 	}
 
 	public String getTelephone() {

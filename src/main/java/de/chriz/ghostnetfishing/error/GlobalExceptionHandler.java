@@ -24,13 +24,19 @@ public class GlobalExceptionHandler {
 	}
 
 	// Schließe falsche Eingabeformate aus -> Error Page
-	@ExceptionHandler({org.springframework.web.bind.MethodArgumentNotValidException.class,
-			  org.springframework.validation.BindException.class,
-			  org.springframework.beans.TypeMismatchException.class,
-			  org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
-			  NumberFormatException.class})
+	@ExceptionHandler({ org.springframework.web.bind.MethodArgumentNotValidException.class,
+			org.springframework.validation.BindException.class, org.springframework.beans.TypeMismatchException.class,
+			org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
+			NumberFormatException.class })
 	public String handleInvalidFormatException(Exception ex, Model model) {
 		model.addAttribute("errorMessage", "Für Dezimalzahlen bitte + '.' +  verwenden. Bsp.: 12.345");
+		return "error";
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public String handleIllegalStateException(Model model) {
+		model.addAttribute("errorMessage",
+				"Keine bergende Person hinterlegt. Bitte wenden Sie sich an den Administrator");
 		return "error";
 	}
 

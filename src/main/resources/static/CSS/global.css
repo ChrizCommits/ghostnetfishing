@@ -266,7 +266,7 @@ legend {
 
 
 /* Färbt Elemente auffällig ein */
- .pagination-wrapper .highlighted {
+.pagination-wrapper .highlighted {
 	color: #FFF !important;
 	background: var(--dark-grey) !important;
 }
@@ -404,6 +404,16 @@ legend {
 .read-only input:visited {
 	background-color: var(--medium-grey);
 	cursor: default;
+}
+
+.info-wrapper {
+	justify-content: center;
+	gap: 5em;
+	display: flex;
+}
+
+.info-wrapper fieldset {
+	flex: 0 0 33%;
 }
 
 /* Pagination */

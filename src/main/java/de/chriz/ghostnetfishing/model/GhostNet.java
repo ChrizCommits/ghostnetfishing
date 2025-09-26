@@ -21,7 +21,7 @@ public class GhostNet {
 	@LastModifiedDate
 	@Column(name = "last_updated")
 	private LocalDateTime lastUpdated;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST) // Wenn ein Netz gelöscht wird, bleibt der Nutzer bestehen
 	@JoinColumn(name = "user_id")
 	private User user; // Nutzer Objekt, beinhaltet alle nutzerbezogenen Variablen
 
