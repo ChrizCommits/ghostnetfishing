@@ -474,12 +474,16 @@ legend {
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
 	align-items: center;
-	margin-top: .5em;
+	height: 2em;
 }
 
 .pagination-link .home-link {
 	font-weight: 400;
 	color: #000;
+}
+
+.pagination-link .left {
+	align-self: baseline;
 }
 
 .pagination-button {
