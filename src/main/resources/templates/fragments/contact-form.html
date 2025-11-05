@@ -6,7 +6,6 @@
 	method="post"
 	xmlns:th="http://www.thymeleaf.org">
 
-
 	<div class="form-row info-wrapper">
 		<fieldset>
 			<legend>Informationen zum Netz</legend>
@@ -75,13 +74,11 @@
 						th:field="*{size}"
 						th:readonly="${formAction != '/report'}"
 						placeholder="qm" />
-
 				</div>
 				<div
 					class="errorMessage"
 					th:if="${#fields.hasErrors('size')}"
 					th:errors="*{size}"></div>
-
 			</div>
 		</fieldset>
 
@@ -123,9 +120,6 @@
 						th:field="*{user.anonym}" /> <label th:for="*{user.anonym}">Anonym bleiben?</label>
 				</div>
 			</div>
-
-
-
 		</fieldset>
 	</div>
 	<div class="form-row button-centered">

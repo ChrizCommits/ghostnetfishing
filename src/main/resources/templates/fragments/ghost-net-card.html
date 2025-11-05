@@ -17,8 +17,7 @@
 		<p th:text="${net.size}"></p>
 	</div>
 
-	<th:block
-		th:fragment="ghostNetCard(net)"
+	<div
 		class="item-group">
 		<th:block th:if="${net.status.name() == 'GEMELDET'}">
 			<th:block th:replace="~{fragments/ghost-net-card-buttons-initial :: ghostNetCardButtonsInitial(net=${net})}" />
@@ -29,6 +28,6 @@
 		<th:block th:if="${net.status.name() == 'GEBORGEN' or net.status.name() == 'VERSCHOLLEN'}">
 			<th:block th:replace="~{fragments/ghost-net-card-status :: ghostNetCardStatus(net=${net})}" />
 		</th:block>
-	</th:block>
+	</div>
 
 </div>

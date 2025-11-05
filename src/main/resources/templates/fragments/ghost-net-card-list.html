@@ -13,7 +13,8 @@
 			<a th:href="@{/}"><span class="home-link">→ zurück zum Start</span></a>
 		</div>
 		<div class="middle">
-			<th:block th:replace="~{fragments/pagination :: pagination(page=${page}, basePath=${basePath})}"></th:block>
+			<th:block th:replace="~{fragments/pagination :: pagination(page=${page},
+				 basePath=${basePath})}"></th:block>
 		</div>
 		<div class="right"></div>
 	</div>

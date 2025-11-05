@@ -120,8 +120,8 @@ public class GhostNetController {
 			@RequestParam(defaultValue = "0") int recoveryPageIndex,
 			@RequestParam(defaultValue = "0") int recoveredLostPageIndex) {
 
-		// Regelt die Zahl der Items der Pagination
-		final int pageSize = 5;
+		// Pagination
+		final int pageSize = 5; // Regelt die Zahl der Items der Pagination
 		Pageable pageableReported = PageRequest.of(reportedPageIndex, pageSize);
 		Pageable pageableRecovery = PageRequest.of(recoveryPageIndex, pageSize);
 		Pageable pageableRecoveredLost = PageRequest.of(recoveredLostPageIndex, pageSize);
