@@ -1,12 +1,12 @@
-# ghostnetfishing
+# 🌊 ghostnetfishing
 
 Webprojekt im Modul Programmierung von industriellen Informationssystemen mit Java EE (IPWA02-01).
 Im Rahmen des ersten Sprints wurde eine Plattform entwickelt, über die Geisternetze gemeldet und Bergungen koordiniert werden können. 
 Die Netze werden nach Status gruppiert dargestellt und noch zu bergende Netze auf einer Weltkarte visualisiert.
 
-## Installation & Setup
+## ⚙️ Installation & Setup
 
-### Voraussetzungen
+### 📋 Voraussetzungen
 - **[JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)** oder höher
 - **Maven** – in Eclipse bereits integriert, in VS Code z. B. über das Plugin *Maven for Java*  
 - **MySQL** – z. B. über [XAMPP](https://www.apachefriends.org/de/index.html) oder lokal installiert  
@@ -14,15 +14,15 @@ Die Netze werden nach Status gruppiert dargestellt und noch zu bergende Netze au
 
 ---
 
-### Einrichtungsschritte
+### 🧩 Einrichtungsschritte
 
-#### 1. Repository in IDE klonen
+#### 1️⃣ Repository in IDE klonen
 ```git clone https://github.com/chriz/ghostnetfishing.git```
 
-#### 2. XAMPP starten
+#### 2️⃣ XAMPP starten
 Im XAMPP-Control-Panel **Apache** und **MySQL** starten.
 
-#### 3. Datenbank erstellen und Dump importieren
+#### 3️⃣ Datenbank erstellen und Dump importieren
 1. Im Browser http://localhost/phpmyadmin/ öffnen:
 2. Neue Datenbank erstellen
   SQL Befehle:
@@ -32,16 +32,16 @@ Im XAMPP-Control-Panel **Apache** und **MySQL** starten.
   ```
 3. Anschließend die Datei `db/ghostnetfishing.sql` aus dem Repository über phpMyAdmin importieren.
 
-#### 4. Anwendung in IDE starten
+#### 4️⃣ Anwendung in IDE starten
 Eclipse: Run As → Spring Boot App
 VS Code: `GhostNetFishingApplication.java` ausführen
 
-#### 5. Anwendung im Browser öffnen
+#### 5️⃣ Anwendung im Browser öffnen
 http://localhost:8090/
 
 ---
 
-## Hinweise
+## 💡 Hinweise
 
 Falls Port 8090 oder 3306 belegt ist, kann in `resources/application.properties` ein anderer Port gewählt werden:
 ```
